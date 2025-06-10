@@ -1,6 +1,12 @@
+import express from 'express';
+import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { verifyToken } from './auth.js';
+
+dotenv.config();
+const app = express();
+app.use(express.json());
 
 app.get('/api/users', verifyToken, (req, res) => {
   res.json(users.map(({ password, ...u }) => u));
@@ -31,4 +37,9 @@ app.post('/api/auth/login', async (req, res) => {
   const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
   res.json({ token });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
